@@ -1,0 +1,163 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Firstname:</strong>
+  <%= @user.firstname %>
+</p>
+
+<p>
+  <strong>Lastname:</strong>
+  <%= @user.lastname %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @user.email %>
+</p>
+
+<p>
+  <strong>Postal adress:</strong>
+  <%= @user.postal_adress %>
+</p>
+
+<p>
+  <strong>Admin:</strong>
+  <%= @user.admin %>
+</p>
+
+<% if current_user %>
+    Trustability: <%= rating_for @user, "trustability" %>
+    <br>
+<% end %>
+
+<h1>Products created</h1>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <td>Title</td>
+    <td>Description</td>
+    <td>Price</td>
+    <td>Actions</td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @products.each do |product| %>
+      <tr>
+        <td><%= product.title %></td>
+        <td><%= product.description %></td>
+        <td><%= product.price %></td>
+        <td>
+          <%= link_to 'Show', product_path, class: "btn btn-info" %>
+          <%= link_to 'Edit', edit_product_path(product) , class: "btn btn-info" if current_user == @user || current_user.admin?%>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+<br>
+<br>
+
+<h2>Products in bidding process</h2>
+
+
+    <table class="table table-bordered table-hover">
+      <thead>
+      <tr>
+        <td>Title</td>
+        <td>Description</td>
+        <td>Price</td>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @products.each do |product| %>
+          <% if product.bidder_id != nil && product.buyer_id == nil %>
+          <tr>
+            <td><%= product.title %></td>
+            <td><%= product.description %></td>
+            <td><%= product.price %></td>
+            <% end %>
+      <% end %>
+          </tr>
+      </tbody>
+      </table>
+
+<br>
+<br>
+
+
+<h2>Products sold</h2>
+
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <td>Title</td>
+    <td>Description</td>
+    <td>Price</td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @products.each do |product| %>
+      <% if product.buyer_id != nil %>
+          <tr>
+            <td><%= product.title %></td>
+            <td><%= product.description %></td>
+            <td><%= product.price %></td>
+      <% end %>
+  <% end %>
+  </tr>
+  </tbody>
+</table>
+<br>
+<br>
+
+<h1>Stats</h1>
+
+<h2>Visits of your profile page : <%= @user.impressionist_count %></h2><br>
+
+<h2>Visits per product</h2>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <% @products.each do |product| %>
+  <td><%= product.title %> </td>
+  <% end %>
+  </thead>
+  <tbody>
+  <% @products.each do |product| %>
+      <td><%= product.impressionist_count %> </td>
+  <% end %>
+  </tbody>
+</table>
+<br>
+
+<h2>Visits per category</h2>
+
+<table class="table table-bordered table-hover">
+  <thead>
+      <%categories = Category.where('id in (?)', Product.select('distinct category_id').where('user_id = ?', @user.id)) %>
+      <% categories.each do |cat| %>
+      <td><%= cat.name %></td>
+      <% end %>
+  </thead>
+  <tbody>
+  <% categories.each do |cat| %>
+
+
+  <% end %>
+  </tbody>
+</table>
+<br>
+
+
+
+
+
+
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>

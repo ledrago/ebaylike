@@ -1,0 +1,52 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Category Name:</strong>
+  <%= @category.name %>
+</p>
+
+<% @category.ancestors.each do |a| %>
+ <%= link_to a.name, a %>
+    &gt;
+  <% end %>
+<%= @category.name %>
+
+
+<p>
+
+
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <td>Title</td>
+    <td>Category</td>
+    <td>Description</td>
+    <td>Price</td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @products.each do |product| %>
+      <tr>
+        <td><%= product.title %></td>
+        <% if  @category != product.category %>
+        <td><%= link_to product.category.name, category_path(product.category) %></td>
+            <% else %>
+        <td><%=  product.category.name %></td>
+            <% end %>
+        <td><%= product.description %></td>
+        <td><%= product.price %></td>
+        <td>
+          <%= link_to 'Show', product_path, class: "btn btn-info" %>
+          <%= link_to 'Edit', edit_product_path(product) , class: "btn btn-info" if current_user == @user || current_user.admin?%>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+
+
+<%= link_to 'Edit', edit_category_path(@category) %> |
+<%= link_to 'Back', categories_path %>

@@ -1,0 +1,97 @@
+<p id="notice"><%= notice %></p>
+
+
+
+<p>
+  <strong>Remaining time:</strong>
+  <% @t1 = @product.bidding_date_end
+     @t2 = Time.now.to_datetime
+     @duree = @t1 - @t2
+     @heures=(@duree / 0.36).round / 10000
+     @minutes=((@duree % 3600) / 0.006).round / 10000
+     @secondes=(((@duree % 3600) % 60)*10000).round / 10000%>
+  <%= @heures %> hours <%= @minutes %> minutes <%= @secondes %> secondes
+</p>
+
+<% if @duree == 0 %>
+
+    <% controller.redirect_to buy_time_path(@product) ,method: :get %>
+
+<% end %>
+
+
+<p>
+  <strong>Title:</strong>
+  <%= @product.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @product.description %>
+</p>
+
+<p>
+  <strong>Price :</strong>
+  <%= @product.price %>€
+</p>
+
+<% if @product.price < @product.mini_bid %>
+    <p>
+      <strong>The minimum price is not reached</strong>
+    </p>
+    <% end %>
+
+<% if @product.bidder_id == current_user.id %>
+    <p>
+      <strong>You are the best bidder</strong>
+    </p>
+<% end %>
+
+<% if @product.price >= @product.immediate_price %>
+
+  <% controller.redirect_to buy_path(@product) ,method: :get %>
+
+     <% end %>
+
+<% if current_user != @product.user %>
+
+<p>
+  <strong>Immediate purchase :</strong> <%= @product.immediate_price %> € <%= link_to 'Buy', buy_path(@product) ,method: :get %>
+</p>
+<p>
+
+<%= form_for @product, :url => url_for(:controller => 'products', :action => 'bid'), method: :put do |f| %>
+  <div>
+    <%= f.text_field :price %>
+  </div>
+    <div>
+      <%= f.submit "To bid", :class => "btn btn-success" %>
+    </div>
+<% end %>
+
+<p>
+  <strong>Category:</strong>
+  <%= link_to Category.find_by(id: @product.category_id).name, category_path(Category.find_by(id: @product.category_id)) %>
+</p>
+
+
+<% if (@product.user_id != session[:user_id]) %>
+
+<div class="row">
+  <br>
+  <div class="small-2 large-4 columns">
+    <% if current_user %>
+        Quality: <%= rating_for @product, "quality" %>
+        <br>
+    <% end %>
+  </div>
+</div>
+
+    <% end %>
+
+<%= render partial: "comments/template", locals: {commentable: @product, new_comment: @new_comment} %>
+
+    <% end %>
+
+<%= link_to 'Edit', edit_product_path(@product) %> |
+<%= link_to 'Back', products_path %>
